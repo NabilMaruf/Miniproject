@@ -1,0 +1,193 @@
+import os
+import matplotlib.pyplot as plt
+
+class Node:
+    def __init__(self, produk=None, motif=None, harga=None, ukuran=None, stok=None):
+        self.produk = produk
+        self.motif = motif
+        self.harga = harga
+        self.ukuran = ukuran
+        self.stok = stok
+        self.next = None
+
+class Batik:
+    def __init__(self):
+        self.head = None
+
+    def periksa_produk(self, produk):
+        current = self.head
+        while current:
+            if current.produk == produk:
+                return True
+            current = current.next
+        return False
+
+    def tambah_di_awal(self, produk, motif, harga, ukuran, stok):
+        new_node = Node(produk, motif, harga, ukuran, stok)
+        new_node.next = self.head
+        self.head = new_node
+        print(f"Produk {produk} berhasil ditambahkan di awal.")
+        input('Tekan enter untuk melanjutkan...')
+
+    def tambah_di_tengah(self, produk_sebelumnya, produk_baru, motif, harga, ukuran, stok):
+        if not self.head:
+            print("Tidak ada produk.")
+            return
+
+        current = self.head
+        while current:
+            if current.produk == produk_sebelumnya:
+                new_node = Node(produk_baru, motif, harga, ukuran, stok)
+                new_node.next = current.next
+                current.next = new_node
+                print(f"Produk {produk_baru} berhasil ditambahkan setelah {produk_sebelumnya}.")
+                return
+            current = current.next
+        
+        print(f"Tidak dapat menambahkan {produk_baru}. Produk {produk_sebelumnya} tidak ditemukan.")
+
+    def tambah_di_akhir(self, produk, motif, harga, ukuran, stok):
+        new_node = Node(produk, motif, harga, ukuran, stok)
+        if not self.head:
+            self.head = new_node
+            return
+        
+        current = self.head
+        while current.next:
+            current = current.next
+        current.next = new_node
+
+    def hapus_produk(self, produk):
+        if not self.head:
+            print("Tidak ada produk.")
+            return
+
+        if self.head.produk == produk:
+            self.head = self.head.next
+            print(f"Produk {produk} berhasil dihapus.")
+            return
+
+        current = self.head
+        while current.next is not None:
+            if current.next.produk == produk:
+                current.next = current.next.next
+                print(f"Produk {produk} berhasil dihapus.")
+                return
+            current = current.next
+
+        print(f"Produk {produk} tidak ditemukan.")
+
+    def tampilkan(self):
+        current = self.head
+        while current:
+            print(f"Produk: {current.produk}")
+            current = current.next
+
+    def plot_diagram_batang(self):
+        produk_list = []
+        harga_list = []
+        current = self.head
+        while current:
+            produk_list.append(current.produk)
+            harga_list.append(current.harga)
+            current = current.next
+
+        plt.figure(figsize=(10, 6))
+        plt.bar(produk_list, harga_list, color='skyblue')
+        plt.xlabel('Produk')
+        plt.ylabel('Harga')
+        plt.title('Diagram Batang Harga Produk Batik')
+        plt.xticks(rotation=45, ha='right')
+        plt.tight_layout()
+        plt.show()
+
+def menu():
+    batik_list = Batik()
+    while True:
+        os.system('cls')
+        print('╔════Pilih Opsi Yang Anda Inginkan════╗')
+        print('| [1].Tampilkan Semua Produk Batik    |')
+        print('| [2].Tambahkan Produk Batik          |')
+        print('| [3].Hapus Produk Batik              |')
+        print('| [4].Keluar                          |')
+        print('╚═════════════════════════════════════╝')
+        try:
+            pilihan = int(input('Silahkan masukkan pilihan anda (1/2/3/4): '))
+        except ValueError:
+            print('Masukkan opsi menggunakan angka!(1/2/3/4)')
+            input('Tekan enter untuk kembali...')
+            continue
+
+        if pilihan == 1:
+            batik_list.tampilkan()
+            if batik_list.head:
+                batik_list.plot_diagram_batang()
+                input('Tekan enter untuk kembali ke menu...')
+            else:
+                print("Belum ada produk batik yang tersedia.")
+                input('Tekan enter untuk melanjutkan...')
+
+        elif pilihan == 2:
+            os.system('cls')
+            batik_list.tampilkan()
+            print('╔════Pilih Opsi Yang Anda Inginkan════╗')
+            print('| [1].Tambahkan di awal               |')
+            print('| [2].Tambahkan di akhir              |')
+            print('| [3].Tambahkan di tengah             |')
+            print('| [4].Keluar                          |')
+            print('╚═════════════════════════════════════╝')
+            masukan = int(input('Silahkan masukkan pilihan anda (1/2/3/4): '))
+            if masukan == 1:
+                produk = input('Masukkan produk: ')
+                motif = input('Masukkan motif Batik: ')
+                harga = int(input('Masukkan harga(berupa angka): '))
+                ukuran = input('Masukkan Ukuran(XL/L/M): ')
+                stok = int(input('Masukkan Stok: '))
+                batik_list.tambah_di_awal(produk, motif, harga, ukuran, stok)
+            elif masukan == 2:
+                produk = input('Masukkan produk: ')
+                motif = input('Masukkan motif Batik: ')
+                harga = int(input('Masukkan harga(berupa angka): '))
+                ukuran = input('Masukkan Ukuran(XL/L/M): ')
+                stok = int(input('Masukkan Stok: '))
+                batik_list.tambah_di_akhir(produk, motif, harga, ukuran, stok)
+            elif masukan == 3:
+                produk_sebelumnya = input('Masukkan nama produk sebelumnya: ')
+                produk_baru = input('Masukkan produk baru: ')
+                motif = input('Masukkan motif Batik: ')
+                harga = int(input('Masukkan harga(berupa angka): '))
+                ukuran = input('Masukkan Ukuran(XL/L/M): ')
+                stok = int(input('Masukkan Stok: '))
+                batik_list.tambah_di_tengah(produk_sebelumnya, produk_baru, motif, harga, ukuran, stok)
+            elif masukan == 4:
+                break
+            else:
+                print('Pilihan tidak valid.')
+                input('Tekan enter untuk kembali...')
+                break
+
+        elif pilihan == 3:
+            produk = input("Masukkan Produk yang ingin di hapus: ")
+            if batik_list.periksa_produk(produk):
+                batik_list.hapus_produk(produk)
+                input("Tekan enter untuk melanjutkan...")
+            else:
+                print(f"Produk {produk} tidak ada.")
+                input("Tekan enter untuk melanjutkan...")
+                menu()
+
+        elif pilihan == 4:
+            print('Terima kasih telah menggunakan program ini.')
+            break
+
+        else:
+            print('Pilihan tidak valid.')
+
+def pembukaan():
+    os.system('cls')
+    print('!!!Hai selamat datang di RufBatik!!!')
+    input('Tekan enter untuk melanjutkan...')
+    menu()
+
+if __name__ == "__main__":
+    pembukaan()
